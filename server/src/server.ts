@@ -1,0 +1,55 @@
+import express from "express";
+import cors from "cors";
+import cookieSession from "cookie-session";
+import dotenv from "dotenv";
+dotenv.config();
+
+const app = express();
+
+app.use(cors());
+
+app.use(express.json());
+
+app.use(express.urlencoded({ extended: true }));
+
+app.use(
+  cookieSession({
+    name: "turnote-session",
+    secret: process.env.SECRET,
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+  })
+);
+
+// db
+const dbConfig = require("./config/db.config");
+const mongoose = require("mongoose");
+
+mongoose.set('strictQuery', false);
+
+mongoose
+  .connect(`mongodb://${dbConfig.USER}:${dbConfig.PASSWORD}@${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}?${dbConfig.CONNECTIONOPTS}`, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+  .then(() => {
+    console.log("Successfully connect to MongoDB.");
+  })
+  .catch((err: any) => {
+    console.error("Connection error", err);
+    process.exit();
+  });
+
+app.get("/", (req, res) => {
+  res.json({ message: "Welcome to application." });
+});
+
+import { authRoutes } from './routes/auth.routes';
+import { userRoutes } from './routes/user.routes';
+authRoutes(app);
+userRoutes(app);
+
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}.`);
+});
