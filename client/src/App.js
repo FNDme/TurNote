@@ -10,6 +10,7 @@ import Register from "./app/components/Register";
 import Home from "./app/components/Home";
 import Profile from "./app/components/Profile";
 import BoardUser from "./app/components/BoardUser";
+import NoteEditor from "./app/components/NoteEditor";
 
 import { logout } from "./app/slices/auth";
 
@@ -35,6 +36,16 @@ const App = () => {
                 <li className="nav-item">
                   <Link to={"/user"} className="nav-link">
                     Content
+                  </Link>
+                </li>
+              )}
+            </div>
+
+            <div className="navbar-nav mr-auto">
+              {currentUser && (
+                <li className="nav-item">
+                  <Link to={"/editor"} className="nav-link">
+                    Editor
                   </Link>
                 </li>
               )}
@@ -80,6 +91,7 @@ const App = () => {
             <Route path="/register" element={<Register />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/user" element={<BoardUser />} />
+            <Route path="/editor" element={<NoteEditor />} />
           </Routes>
         </div>
       </div>

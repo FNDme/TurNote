@@ -12,9 +12,9 @@ const Profile = () => {
   return (
     <div className="container">
       <header className="jumbotron">
-        <h3>
+        <h1>
           <strong>{currentUser.username}</strong> Profile
-        </h3>
+        </h1>
       </header>
       <p>
         <strong>Id:</strong> {currentUser.id}
