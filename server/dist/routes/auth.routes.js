@@ -33,6 +33,7 @@ function authRoutes(app) {
     });
     app.post("/api/auth/signup", middlewares_1.middlewares.verifySignUp.checkDuplicateUsernameOrEmail, controller.signup);
     app.post("/api/auth/signin", controller.signin);
+    app.delete("/api/auth/removeAccount", middlewares_1.middlewares.authJwt.verifyToken, controller.removeAccount);
     app.get("/api/auth/signout", controller.signout);
 }
 exports.authRoutes = authRoutes;

@@ -7,10 +7,11 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
+    "@tiptap/react": "^2.0.0-beta.207",
+    "@tiptap/starter-kit": "^2.0.0-beta.207",
     "axios": "^1.2.1",
     "bootstrap": "^5.2.3",
     "dotenv": "^16.0.3",
-    "draft-js": "^0.11.7",
     "formik": "^2.2.9",
     "http-proxy-middleware": "^2.0.6",
     "react": "^18.2.0",
@@ -25,7 +26,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "cypress:open": "cypress open"
   },
   "eslintConfig": {
     "extends": [

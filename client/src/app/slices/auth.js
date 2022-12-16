@@ -49,6 +49,26 @@ export const logout = createAsyncThunk('auth/logout', async () => {
   }
 );
 
+export const removeAccount = createAsyncThunk(
+  'auth/removeAccount',
+  async (thunkAPI) => {
+  try {
+    const response = await AuthService.removeAccount();
+    thunkAPI.dispatch(setMessage(response.data.message));
+    return response.data;
+  } catch (error) {
+    const message =
+      ( error.response &&
+        error.response.data &&
+        error.response.data.message) ||
+      error.message ||
+      error.toString();
+    thunkAPI.dispatch(setMessage(message));
+    return thunkAPI.rejectWithValue();
+  }
+});
+
+
 const initialState = user
   ? { isLoggedIn: true, user }
   : { isLoggedIn: false, user: null };
@@ -75,6 +95,10 @@ const authSlice = createSlice({
       state.isLoggedIn = false;
       state.user = null;
     },
+    [removeAccount.fulfilled]: (state, action) => {
+      state.isLoggedIn = false;
+      state.user = null;
+    }
   },
 });
 

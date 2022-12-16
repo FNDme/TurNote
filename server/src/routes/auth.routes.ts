@@ -18,5 +18,10 @@ export function authRoutes(app: any) {
 
   app.post("/api/auth/signin", controller.signin);
 
+  app.delete("/api/auth/removeAccount",
+    middlewares.authJwt.verifyToken,
+    controller.removeAccount
+  );
+
   app.get("/api/auth/signout", controller.signout);
 }

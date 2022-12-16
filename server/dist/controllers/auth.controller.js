@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.signout = exports.signin = exports.signup = void 0;
+exports.removeAccount = exports.signout = exports.signin = exports.signup = void 0;
 const config = require("../config/auth.config");
 const models_1 = require("../models");
 const User = models_1.db.user;
@@ -95,3 +95,16 @@ const signout = (req, res) => {
     }
 };
 exports.signout = signout;
+const removeAccount = (req, res) => {
+    User.findOneAndRemove({ _id: req.userId }, (err, user) => {
+        if (err) {
+            res.status(500).send({ message: err });
+            return;
+        }
+        if (!user) {
+            return res.status(404).send({ message: "User Not found." });
+        }
+        res.status(200).send({ message: "User was deleted successfully!" });
+    });
+};
+exports.removeAccount = removeAccount;

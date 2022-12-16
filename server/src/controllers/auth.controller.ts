@@ -111,3 +111,18 @@ export const signout = (req: any, res: any) => {
     res.status(500).send({ message: error });
   }
 };
+
+export const removeAccount = (req: any, res: any) => {
+  User.findOneAndRemove({ _id: req.userId }, (err: any, user: any) => {
+    if (err) {
+      res.status(500).send({ message: err });
+      return;
+    }
+
+    if (!user) {
+      return res.status(404).send({ message: "User Not found." });
+    }
+
+    res.status(200).send({ message: "User was deleted successfully!" });
+  });
+};
