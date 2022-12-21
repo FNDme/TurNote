@@ -8,10 +8,6 @@ const NoteSchema = new mongoose_1.Schema({
         required: true,
         trim: true,
     },
-    description: {
-        type: String,
-        trim: true,
-    },
     content: {
         type: String,
         required: true,
@@ -31,7 +27,7 @@ const NoteSchema = new mongoose_1.Schema({
     rating: [
         {
             type: Number,
-            min: 1,
+            min: 0,
             max: 5,
         },
     ],

@@ -4,22 +4,15 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import React from 'react';
 
+import NotesService from '../services/notes.service';
+
+import { WithContext as ReactTags } from 'react-tag-input';
+
 const MenuBarEditor = ({ editor }) => {
-  if (!editor) {
-    return null
-  }
+  if (!editor) return null
 
   return (
     <>
-    {/* Title of note */}
-    <div className='d-flex flex-wrap barRow titleRow'>
-      <input
-        type='text'
-        placeholder='Title'
-        className='title'
-      />
-    </div>
-    {/* Rich text editor */}
     <div className='d-flex flex-wrap barRow'>
       <button
         onClick={() => editor.chain().focus().toggleBold().run()}
@@ -177,18 +170,112 @@ const MenuBarEditor = ({ editor }) => {
   )
 }
 
+const Tags = (props) => {
+
+  const KeyCodes = {
+    comma: 188,
+    enter: 13,
+  }
+
+  const delimiters = [KeyCodes.comma, KeyCodes.enter]
+
+  const handleDelete = (i) => {
+    setTags([...tags.filter((tag, index) => index !== i)])
+  }
+
+  const handleAddition = (tag) => {
+    setTags([...tags, tag])
+  }
+
+  const handleDrag = (tag, currPos, newPos) => {
+    const newTags = tags.slice()
+
+    newTags.splice(currPos, 1)
+    newTags.splice(newPos, 0, tag)
+
+    setTags(newTags)
+  }
+
+  const [tags, setTags] = React.useState([])
+  React.useImperativeHandle(props.forwardedRef, () => ({
+    getTags: () => tags,
+  }))
+  
+  return (  
+    <div className='tags'>
+      <ReactTags
+        tags={tags}
+        handleDelete={handleDelete}
+        handleAddition={handleAddition}
+        handleDrag={handleDrag}
+        delimiters={delimiters}
+        inputFieldPosition='top'
+      />
+    </div>
+  )
+}
+
 const Editor = () => {
   const editor = useEditor({
     extensions: [StarterKit],
     content: ``,
+    title: ``,
   })
 
+  const Tagsref = React.useRef()
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    console.log(editor.getHTML(), editor.title, Tagsref.current.getTags().map((tag) => tag.text))
+    NotesService.publish(editor.title, editor.getHTML(), Tagsref.current.getTags().map((tag) => tag.text))
+  }
+
   return (
-    <div>
+    <>
+      <div className='row'>
+        <div className='col-8'>
+          <div className='title'>
+            <input
+              type='text'
+              className='form-control'
+              placeholder='Title'
+              onChange={(e) => (editor.title = e.target.value)}
+            />
+          </div>
+        </div>
+        <div className='col-4'>
+          <div className='config d-flex justify-content-end'>
+            <button
+              className='btn btn-outline-secondary'
+            >
+              config
+            </button>
+          </div>
+        </div>
+      </div>
       <MenuBarEditor editor={editor} />
       <EditorContent editor={editor} />
-    </div>
+      <div className='row'>
+        <div className='col-8'>
+          <div className='tags'>
+            <Tags forwardedRef={Tagsref} />
+          </div>
+        </div>
+        <div className='col-4'>
+          <div className='d-flex justify-content-end'>
+            <button
+              className='btn btn-outline-secondary publish'
+              onClick={handleSubmit}
+            >
+              publish
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
   )
 }
+
+
 
 export default Editor

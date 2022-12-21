@@ -1,118 +1,298 @@
-// const config = require("../config/auth.config");
-// import {db} from "../models";
-// const Note = db.note;
-// const User = db.user;
+const config = require("../config/auth.config");
+import { db } from "../models";
+import { middlewares } from '../middlewares';
+import exp from 'constants';
+const Note = db.note;
 
-// export const create = (req: any, res: any) => {
-//   const note = new Note({
-//     title: req.body.title,
-//     description: req.body.description,
-//     content: req.body.content,
-//     author: req.body.authorId,
-//     collaborators: req.body.collaborators,
-//     rating: req.body.rating,
-//     tags: req.body.tags,
-//     isPublic: req.body.isPublic,
-//     sharedWith: req.body.sharedWith,
-//   });
+export const getPublicNotes = (req: any, res: any) => {
+  Note.find({ isPublic: true })
+    .exec((err: any, notes: any) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
 
-//   note.save((err: any, note: any) => {
-//     if (err) {
-//       res.status(500).send({ message: err });
-//       return;
-//     }
+      res.send(notes);
+    });
+}
 
-//     res.send({ message: "Note was created successfully!" });
-//   });
-// };
+export const getUserNotes = (req: any, res: any) => {
+  Note.find({ author: req.userId })
+    .exec((err: any, notes: any) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
 
-// export const findAllForUser = (req: any, res: any) => {
-//   // The author can be the author, a collaborator, or a shared user
-//   Note.find({
-//     $or: [
-//       {author: req.params.userId},
-//       {collaborators: req.params.userId},
-//       {sharedWith: {$elemMatch: {user: req.params.userId}}},
-//     ],
-//   })
-//     .populate("author", "-password")
-//     .populate("collaborators", "-password")
-//     .populate("sharedWith.user", "-password")
-//     .exec((err: any, notes: any) => {
-//       if (err) {
-//         res.status(500).send({ message: err });
-//         return;
-//       }
+      res.send(notes);
+    });
+}
 
-//       res.send(notes);
-//     }
-//   );
-// };
+export const getNotes = (req: any, res: any) => {
+  Note.find({ $or: [{ author: req.userId }, { isPublic: true }] })
+    .exec((err: any, notes: any) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
 
-// export const findPublicNotes = (req: any, res: any) => {
-//   Note.find({isPublic: true})
-//     .populate("author", "-password")
-//     .populate("collaborators", "-password")
-//     .populate("sharedWith.user", "-password")
-//     .exec((err: any, notes: any) => {
-//       if (err) {
-//         res.status(500).send({ message: err });
-//         return;
-//       }
+      if (!notes) {
+        return res.status(404).send({ message: "Notes Not found." });
+      }
 
-//       res.send(notes);
-//     }
-//   );
-// };
+      res.send(notes);
+    });
+}
 
-// export const findOne = (req: any, res: any) => {
-//   Note.findById(req.params.id)
-//     .populate("author", "-password")
-//     .populate("collaborators", "-password")
-//     .populate("sharedWith.user", "-password")
-//     .exec((err: any, note: any) => {
-//       if (err) {
-//         res.status(500).send({ message: err });
-//         return;
-//       }
+export const createNote = (req: any, res: any) => {
+  const note = new Note({
+    title: req.body.title,
+    content: req.body.content,
+    author: req.body.author ? req.body.author : req.userId,
+    isPublic: req.body.isPublic ? req.body.isPublic : false,
+    tags: req.body.tags ? req.body.tags : []
+  });
 
-//       if (!note) {
-//         return res.status(404).send({ message: "Note Not found." });
-//       }
+  note.save((err: any, note: any) => {
+    if (err) {
+      res.status(500).send({ message: err });
+      return;
+    }
 
-//       res.send(note);
-//     }
-//   );
-// }
+    res.send(note);
+  });
+}
 
-// export const update = (req: any, res: any) => {
-//   Note.findByIdAndUpdate(
-//     req.params.id,
-//     {
-//       title: req.body.title,
-//       description: req.body.description,
-//       content: req.body.content,
-//       collaborators: req.body.collaborators,
-//       rating: req.body.rating,
-//       tags: req.body.tags,
-//       isPublic: req.body.isPublic,
-//       sharedWith: req.body.sharedWith,
-//     },
-//     { useFindAndModify: false }
-//   )
-//     .exec((err: any, note: any) => {
-//       if (err) {
-//         res.status(500).send({ message: err });
-//         return;
-//       }
+export const getNote = (req: any, res: any) => {
+  const id = req.params.id;
 
-//       if (!note) {
-//         return res.status(404).send({ message: "Note Not found." });
-//       }
+  Note.findById(id)
+    .exec((err: any, note: any) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
 
-//       res.send({ message: "Note was updated successfully!" });
-//     }
-//   );
-// };
+      if (!note) {
+        return res.status(404).send({ message: "Note Not found." });
+      }
 
-// export const remove = (req: any, res: any) => {
+      if (note.author != req.userId && !note.isPublic) {
+        return res.status(401).send({ message: "Unauthorized!" });
+      }
+
+      res.send(note);
+    }
+  );
+}
+
+export const updateNote = (req: any, res: any) => {
+  const id = req.params.id;
+
+  Note.findByIdAndUpdate(id
+    , req.body
+    , { useFindAndModify: false }
+    , (err: any, note: any) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+
+      if (!note) {
+        return res.status(404).send({ message: "Note Not found." });
+      }
+
+      if (note.author != req.userId) {
+        return res.status(401).send({ message: "Unauthorized!" });
+      }
+
+      res.send({ message: "Note was updated successfully." });
+    }
+  );
+}
+
+export const deleteNote = (req: any, res: any) => {
+  const id = req.params.id;
+
+  Note.findByIdAndRemove(id, { useFindAndModify: false }, (err: any, note: any) => {
+    if (err) {
+      res.status(500).send({ message: err });
+      return;
+    }
+
+    if (!note) {
+      return res.status(404).send({ message: "Note Not found." });
+    }
+
+    if (note.author != req.userId) {
+      return res.status(401).send({ message: "Unauthorized!" });
+    }
+
+    res.send({ message: "Note was deleted successfully!" });
+  });
+}
+
+export const addTag = (req: any, res: any) => {
+  const id = req.params.id;
+
+  Note
+    .findById
+    (id)
+    .exec((err: any, note: any) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+
+      if (!note) {
+        return res.status(404).send({ message: "Note Not found." });
+      }
+
+      note.tags.push(req.body.tag);
+
+      note.save((err: any, note: any) => {
+        if (err) {
+          res.status(500).send({ message: err });
+          return;
+        }
+
+        res.send(note);
+      });
+    }
+  );
+}
+
+export const removeTag = (req: any, res: any) => {
+  const id = req.params.id;
+
+  Note
+    .findById
+    (id)
+    .exec((err: any, note: any) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+
+      if (!note) {
+        return res.status(404).send({ message: "Note Not found." });
+      }
+
+      note.tags.pull(req.body.tag);
+
+      note.save((err: any, note: any) => {
+        if (err) {
+          res.status(500).send({ message: err });
+          return;
+        }
+
+        res.send(note);
+      });
+    }
+  );
+}
+
+export const rateNote = (req: any, res: any) => {
+  const id = req.params.id;
+
+  if (req.body.rating > 5 || req.body.rating < 0) {
+    return res.status(400).send({ message: "Rating must be between 1 and 5." });
+  }
+
+  Note
+    .findById
+    (id)
+    .exec((err: any, note: any) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+
+      if (!note) {
+        return res.status(404).send({ message: "Note Not found." });
+      }
+
+      note.rating.push(req.body.rating);
+
+      note.save((err: any, note: any) => {
+        if (err) {
+          res.status(500).send({ message: err });
+          return;
+        }
+
+        res.send(note);
+      });
+    }
+  );
+}
+
+export const unrateNote = (req: any, res: any) => {
+  const id = req.params.id;
+
+  Note
+    .findById
+    (id)
+    .exec((err: any, note: any) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+
+      if (!note) {
+        return res.status(404).send({ message: "Note Not found." });
+      }
+
+      note.rating.pull(req.body.rating);
+
+      note.save((err: any, note: any) => {
+        if (err) {
+          res.status(500).send({ message: err });
+          return;
+        }
+
+        res.send(note);
+      });
+    }
+  );
+}
+
+export const getPublicNotesByTag = (req: any, res: any) => {
+  const tag = req.params.tag;
+
+  Note.find
+    ({ tags: tag, isPublic: true })
+    .exec((err: any, notes: any) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+
+      if (!notes) {
+        return res.status(404).send({ message: "Notes Not found." });
+      }
+
+      res.send(notes);
+    }
+  );
+}
+
+export const getNotesByTag = (req: any, res: any) => {
+  const tag = req.params.tag;
+  const author = req.userId;
+
+  Note.find
+    ({ tags: tag, $or: [{ author: author }, { isPublic: true }] })
+    .exec((err: any, notes: any) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+
+      if (!notes) {
+        return res.status(404).send({ message: "Notes Not found." });
+      }
+
+      res.send(notes);
+    }
+  );
+}

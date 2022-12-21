@@ -4,7 +4,6 @@ type permission = 'read' | 'read-write' | 'admin';
 
 interface NoteInterface extends Document {
   title: string;
-  description: string;
   content: string;
   author: Schema.Types.ObjectId;
   collaborators: Schema.Types.ObjectId[];
@@ -19,10 +18,6 @@ const NoteSchema = new Schema<NoteInterface>({
   title: {
     type: String,
     required: true,
-    trim: true,
-  },
-  description: {
-    type: String,
     trim: true,
   },
   content: {
@@ -44,7 +39,7 @@ const NoteSchema = new Schema<NoteInterface>({
   rating: [
     {
       type: Number,
-      min: 1,
+      min: 0,
       max: 5,
     },
   ],

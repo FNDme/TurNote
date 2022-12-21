@@ -5,13 +5,11 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
-
 app.use(cors());
-
 app.use(express.json());
-
 app.use(express.urlencoded({ extended: true }));
 
+// session
 app.use(
   cookieSession({
     name: "turnote-session",
@@ -40,15 +38,20 @@ mongoose
     process.exit();
   });
 
+// test route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to application." });
 });
 
+// routes
 import { authRoutes } from './routes/auth.routes';
 import { userRoutes } from './routes/user.routes';
+import { notesRoutes } from './routes/notes.routes';
 authRoutes(app);
 userRoutes(app);
+notesRoutes(app);
 
+// set port, listen for requests
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);

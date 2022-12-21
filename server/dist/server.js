@@ -12,6 +12,7 @@ const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
+// session
 app.use((0, cookie_session_1.default)({
     name: "turnote-session",
     secret: process.env.SECRET,
@@ -34,13 +35,18 @@ mongoose
     console.error("Connection error", err);
     process.exit();
 });
+// test route
 app.get("/", (req, res) => {
     res.json({ message: "Welcome to application." });
 });
+// routes
 const auth_routes_1 = require("./routes/auth.routes");
 const user_routes_1 = require("./routes/user.routes");
+const notes_routes_1 = require("./routes/notes.routes");
 (0, auth_routes_1.authRoutes)(app);
 (0, user_routes_1.userRoutes)(app);
+(0, notes_routes_1.notesRoutes)(app);
+// set port, listen for requests
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}.`);
