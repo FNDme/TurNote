@@ -3,7 +3,6 @@ import './noteCreator.css';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import React from 'react';
-import { useParams } from "react-router-dom";
 
 import NotesService from '../services/notes.service';
 
@@ -171,33 +170,38 @@ const MenuBarEditor = ({ editor }) => {
   )
 }
 
-// Fill the title, editor and tags with the note data
-const Tags = ({ tags, setTags }) => {
+const Tags = (props) => {
+
   const KeyCodes = {
     comma: 188,
     enter: 13,
-  };
+  }
 
-  const delimiters = [KeyCodes.comma, KeyCodes.enter];
+  const delimiters = [KeyCodes.comma, KeyCodes.enter]
 
   const handleDelete = (i) => {
-    setTags(tags.filter((tag, index) => index !== i));
+    setTags([...tags.filter((tag, index) => index !== i)])
   }
 
   const handleAddition = (tag) => {
-    setTags([...tags, tag]);
+    setTags([...tags, tag])
   }
 
   const handleDrag = (tag, currPos, newPos) => {
-    const newTags = tags.slice();
+    const newTags = tags.slice()
 
-    newTags.splice(currPos, 1);
-    newTags.splice(newPos, 0, tag);
+    newTags.splice(currPos, 1)
+    newTags.splice(newPos, 0, tag)
 
-    setTags(newTags);
+    setTags(newTags)
   }
 
-  return (
+  const [tags, setTags] = React.useState([])
+  React.useImperativeHandle(props.forwardedRef, () => ({
+    getTags: () => tags,
+  }))
+  
+  return (  
     <div className='tags'>
       <ReactTags
         tags={tags}
@@ -212,42 +216,23 @@ const Tags = ({ tags, setTags }) => {
 }
 
 const Editor = () => {
-  const [errorMessage, setErrorMessage] = React.useState('')
-
-  const id = useParams().id
-
-  const [title, setTitle] = React.useState('')
-  const [tags, setTags] = React.useState([])
-
   const editor = useEditor({
     extensions: [StarterKit],
-    content: '',
+    content: ``,
+    title: ``,
   })
 
-  React.useEffect(() => {
-    NotesService.get(id).then((response) => {
-      setTitle(response.data.title)
-      editor.chain().focus().setContent(response.data.content).run()
-      response.data.tags.forEach((tag) => {
-        setTags((tags) => [...tags, { id: tag, text: tag }])
-      })
-    }).catch((error) => {
-      setErrorMessage(error.response.data.message)
-    })
-  }, [id, editor])
-  
-  const saveNote = () => {
-    NotesService.update(id, title, editor.getHTML(), tags.map((tag) => tag.text)).then(
-      (response) => {
-        console.log(response.data)
-        if (response.status === 200) {
-          window.location.href = `/notes/${id}`
-        }
-      },
-      (error) => {
-        setErrorMessage(error.response.data.message)
+  const Tagsref = React.useRef()
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    NotesService.publish(editor.title, editor.getHTML(), Tagsref.current.getTags().map((tag) => tag.text)).then
+    (response => {
+      console.log(response)
+      if (response.status === 200) {
+        window.location.href = `/notes/${response.data._id}`
       }
-    )
+    })
   }
 
   return (
@@ -259,8 +244,7 @@ const Editor = () => {
               type='text'
               className='form-control'
               placeholder='Title'
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => (editor.title = e.target.value)}
             />
           </div>
         </div>
@@ -279,27 +263,24 @@ const Editor = () => {
       <div className='row'>
         <div className='col-8'>
           <div className='tags'>
-            <Tags tags={tags} setTags={setTags} />
+            <Tags forwardedRef={Tagsref} />
           </div>
         </div>
         <div className='col-4'>
           <div className='d-flex justify-content-end'>
             <button
-              className='btn btn-outline-secondary'
-              onClick={() => saveNote()}
+              className='btn btn-outline-secondary publish'
+              onClick={handleSubmit}
             >
-              save
+              publish
             </button>
           </div>
         </div>
       </div>
-      {errorMessage && (
-        <div className='alert alert-danger' role='alert'>
-          {errorMessage}
-        </div>
-      )}
     </>
   )
 }
+
+
 
 export default Editor

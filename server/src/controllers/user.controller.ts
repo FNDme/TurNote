@@ -1,7 +1,9 @@
+import * as notesController from './notes.controller';
+
 export const allAccess = (req: any, res: any) => {
-  res.status(200).send("Public Content.");
+  notesController.getPublicNotes(req, res);
 };
 
 export const userBoard = (req: any, res: any) => {
-  res.status(200).send("User Content.");
+  notesController.getUserNotes(req, res);
 };

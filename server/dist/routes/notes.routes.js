@@ -36,7 +36,15 @@ function notesRoutes(app) {
     app.get("/api/notes", middlewares_1.middlewares.authJwt.verifyToken, controller.getNotes);
     app.post("/api/notes", middlewares_1.middlewares.authJwt.verifyToken, controller.createNote);
     app.get("/api/notes/:id", middlewares_1.middlewares.authJwt.verifyToken, controller.getNote);
-    app.put("/api/notes/:id", middlewares_1.middlewares.authJwt.verifyToken, controller.updateNote);
+    app.put("/api/notes/:id", function (req, res, next) {
+        console.log("received request to update note");
+        middlewares_1.middlewares.authJwt.verifyToken(req, res, function () {
+            controller.updateNote(req, res);
+        });
+    }
+    // middlewares.authJwt.verifyToken,
+    // controller.updateNote
+    );
     app.delete("/api/notes/:id", middlewares_1.middlewares.authJwt.verifyToken, controller.deleteNote);
     app.get("/api/notes/tags/public/:tag", controller.getPublicNotesByTag);
     app.get("/api/notes/tags/:tag", middlewares_1.middlewares.authJwt.verifyToken, controller.getNotesByTag);

@@ -108,7 +108,7 @@ const Login = () => {
                   disabled={loading}
                 >
                   {loading && (
-                    <span className="spinner-border spinner-border-sm mr-2"></span>
+                    <span className="spinner-border spinner-border-sm spin"></span>
                   )}
                   <span>Login</span>
                 </button>
