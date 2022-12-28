@@ -47,7 +47,6 @@ const NoteSchema = new Schema<NoteInterface>({
     {
       type: String,
       trim: true,
-      match: [/^[a-zA-Z0-9]+$/, 'is invalid'],
     },
   ],
   isPublic: {

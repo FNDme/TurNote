@@ -2,12 +2,44 @@ import './noteCreator.css';
 
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import Toggle from 'react-toggle';
 import React from 'react';
 import { useParams } from "react-router-dom";
 
 import NotesService from '../services/notes.service';
 
 import { WithContext as ReactTags } from 'react-tag-input';
+
+const PopupConfig = ({ isPublic, setIsPublic, handleClose, handleDelete }) => {
+  return (
+    <div className='popup-box'>
+      <div className='popup-config'>
+        <h2>Configuration</h2>
+        <hr></hr>
+        <span className='close-btn' onClick={handleClose}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+          </svg>
+        </span>
+        <div className='d-flex justify-content-between'>
+          <div className='d-flex align-items-center'>
+            <Toggle
+              id="isPublicStatus"
+              defaultChecked={isPublic}
+              onChange={() => {
+                setIsPublic(!isPublic);
+              }}
+            />
+            {
+              isPublic ? <label htmlFor="isPublicStatus" className='ml-2'>Public</label> : <label htmlFor="isPublicStatus" className='ml-2'>Private</label>
+            }
+          </div>
+          <button className='btn btn-danger' onClick={handleDelete}>Remove Note</button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const MenuBarEditor = ({ editor }) => {
   if (!editor) return null
@@ -171,7 +203,6 @@ const MenuBarEditor = ({ editor }) => {
   )
 }
 
-// Fill the title, editor and tags with the note data
 const Tags = ({ tags, setTags }) => {
   const KeyCodes = {
     comma: 188,
@@ -213,11 +244,12 @@ const Tags = ({ tags, setTags }) => {
 
 const Editor = () => {
   const [errorMessage, setErrorMessage] = React.useState('')
-
-  const id = useParams().id
-
   const [title, setTitle] = React.useState('')
   const [tags, setTags] = React.useState([])
+  const [isPublic, setIsPublic] = React.useState(false)
+  const [isPopupOpen, setIsPopupOpen] = React.useState(false)
+
+  const id = useParams().id
 
   const editor = useEditor({
     extensions: [StarterKit],
@@ -227,21 +259,40 @@ const Editor = () => {
   React.useEffect(() => {
     NotesService.get(id).then((response) => {
       setTitle(response.data.title)
-      editor.chain().focus().setContent(response.data.content).run()
+      if (editor)
+        editor.chain().focus().setContent(response.data.content).run()
       response.data.tags.forEach((tag) => {
         setTags((tags) => [...tags, { id: tag, text: tag }])
       })
+      setIsPublic(response.data.isPublic)
     }).catch((error) => {
-      setErrorMessage(error.response.data.message)
+      console.log(error)
+      setErrorMessage(error.message)
     })
   }, [id, editor])
   
   const saveNote = () => {
-    NotesService.update(id, title, editor.getHTML(), tags.map((tag) => tag.text)).then(
+    NotesService.update(id, title, editor.getHTML(), tags.map((tag) => tag.text), isPublic).then(
       (response) => {
-        console.log(response.data)
         if (response.status === 200) {
           window.location.href = `/notes/${id}`
+        }
+      },
+      (error) => {
+        setErrorMessage(error.response.data.message)
+      }
+    )
+  }
+
+  const togglePopupConfig = () => {
+    setIsPopupOpen(!isPopupOpen)
+  }
+
+  const handleDelete = () => {
+    NotesService.remove(id).then(
+      (response) => {
+        if (response.status === 200) {
+          window.location.href = '/user'
         }
       },
       (error) => {
@@ -268,6 +319,7 @@ const Editor = () => {
           <div className='config d-flex justify-content-end'>
             <button
               className='btn btn-outline-secondary'
+              onClick={togglePopupConfig}
             >
               config
             </button>
@@ -285,7 +337,7 @@ const Editor = () => {
         <div className='col-4'>
           <div className='d-flex justify-content-end'>
             <button
-              className='btn btn-outline-secondary'
+              className='btn btn-outline-secondary publish'
               onClick={() => saveNote()}
             >
               save
@@ -297,6 +349,14 @@ const Editor = () => {
         <div className='alert alert-danger' role='alert'>
           {errorMessage}
         </div>
+      )}
+      {isPopupOpen && (
+        <PopupConfig
+          isPublic={isPublic}
+          setIsPublic={setIsPublic}
+          handleClose={togglePopupConfig}
+          handleDelete={handleDelete}
+        />
       )}
     </>
   )

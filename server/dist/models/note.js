@@ -35,7 +35,6 @@ const NoteSchema = new mongoose_1.Schema({
         {
             type: String,
             trim: true,
-            match: [/^[a-zA-Z0-9]+$/, 'is invalid'],
         },
     ],
     isPublic: {

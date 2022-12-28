@@ -15,14 +15,6 @@ const verifyToken = (req: any, res: any, next: any) => {
       next();
     }
   });
-
-  // jwt.verify(token, config.secret, (err: any, decoded: any) => {
-  //   if (err) {
-  //     return res.status(401).send({ message: "Unauthorized!" });
-  //   }
-  //   req.userId = decoded.id;
-  //   next();
-  // });
 };
 
 export const authJwt = {

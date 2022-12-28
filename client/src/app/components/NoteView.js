@@ -12,31 +12,34 @@ const Note = () => {
   const [errorMessage, setErrorMessage] = React.useState(null);
 
   React.useEffect(() => {
-    NotesService.get(id).then((response) => {
-      setNote({
-        title: response.data.title,
-        content: response.data.content,
-        tags: response.data.tags,
-        author: response.data.author,
-      })
-    })
-    .catch((error) => {
-      console.log(error.response);
-      if (error.response.status === 404) {
-        setErrorMessage({ status: 404, message: "Note not found" });
-      } else if (error.response.status === 500) {
-        setErrorMessage({ status: 500, message: "Internal server error" });
-      } else if (error.response.status === 401) {
-        setErrorMessage({ status: 401, message: "Unauthorized" });
-      } else {
-        setErrorMessage({ status: 400, message: "Bad request" });
-      }
-    });
-  }
-  , [id]);
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) {
+      NotesService.getPublic(id).then((response) => {
+        setNote({
+          title: response.data.title,
+          content: response.data.content,
+          tags: response.data.tags,
+          author: response.data.author,
+        })
+      }).catch((error) => {
+        setErrorMessage(error.data.message)
+      });
+    } else {
+      NotesService.get(id).then((response) => {
+        setNote({
+          title: response.data.title,
+          content: response.data.content,
+          tags: response.data.tags,
+          author: response.data.author,
+        })
+      }).catch((error) => {
+        setErrorMessage(error.data.message)
+      });
+    }
+  }, [id]);
 
   const EditButton = () => {
-    if (note?.author === JSON.parse(localStorage.getItem("user")).id) {
+    if (JSON.parse(localStorage.getItem("user"))?.id === note?.author) {
       return (
         <div className="d-flex justify-content-end">
           <a href={`/notes/${id}/edit`} className="btn btn-dark m-3">
@@ -60,7 +63,7 @@ const Note = () => {
             <header className="jumbotron">
               <div className="tags mb-3">
                 {note?.tags.map((tag) => {
-                  return <span className="badge bg-secondary">{tag}</span>;
+                  return <span key={tag} className="badge bg-secondary">{tag}</span>;
                 }
                 )}
               </div>

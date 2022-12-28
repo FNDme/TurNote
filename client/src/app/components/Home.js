@@ -9,11 +9,9 @@ const Home = () => {
   React.useEffect(() => {
     UserService.getPublicContent().then(
       (response) => {
-        console.log(response);
         setContent(response.data);
       },
       (error) => {
-        console.log(error);
         const _content =
           (error.response &&
             error.response.data &&

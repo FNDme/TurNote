@@ -39,6 +39,11 @@ export function notesRoutes(app: any) {
     controller.getNote
   );
 
+  app.get(
+    "/api/notes/public/:id",
+    controller.getPublicNote
+  )
+
   app.put(
     "/api/notes/:id",
     middlewares.authJwt.verifyToken,

@@ -49,5 +49,6 @@ const notes_routes_1 = require("./routes/notes.routes");
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
+    console.clear();
     console.log(`Server is running on port ${PORT}.`);
 });

@@ -16,6 +16,29 @@ export const getPublicNotes = (req: any, res: any) => {
     });
 }
 
+export const getPublicNote = (req: any, res: any) => {
+  const id = req.params.id;
+  
+  Note.findById(id)
+    .exec((err: any, note: any) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+
+      if (!note) {
+        return res.status(404).send({ message: "Note Not found." });
+      }
+
+      if (!note.isPublic) {
+        return res.status(401).send({ message: "Unauthorized!" });
+      }
+
+      res.send(note);
+    }
+  );
+}
+
 export const getUserNotes = (req: any, res: any) => {
   Note.find({ author: req.userId })
     .exec((err: any, notes: any) => {
@@ -55,7 +78,7 @@ export const createNote = (req: any, res: any) => {
 
   note.save((err: any, note: any) => {
     if (err) {
-      res.status(500).send({ message: err });
+      res.status(500).send({ message: 'Error creating note:' + err });
       return;
     }
 

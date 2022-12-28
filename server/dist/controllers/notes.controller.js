@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getNotesByTag = exports.getPublicNotesByTag = exports.unrateNote = exports.rateNote = exports.removeTag = exports.addTag = exports.deleteNote = exports.updateNote = exports.getNote = exports.createNote = exports.getNotes = exports.getUserNotes = exports.getPublicNotes = void 0;
+exports.getNotesByTag = exports.getPublicNotesByTag = exports.unrateNote = exports.rateNote = exports.removeTag = exports.addTag = exports.deleteNote = exports.updateNote = exports.getNote = exports.createNote = exports.getNotes = exports.getUserNotes = exports.getPublicNote = exports.getPublicNotes = void 0;
 const config = require("../config/auth.config");
 const models_1 = require("../models");
 const Note = models_1.db.note;
@@ -15,6 +15,24 @@ const getPublicNotes = (req, res) => {
     });
 };
 exports.getPublicNotes = getPublicNotes;
+const getPublicNote = (req, res) => {
+    const id = req.params.id;
+    Note.findById(id)
+        .exec((err, note) => {
+        if (err) {
+            res.status(500).send({ message: err });
+            return;
+        }
+        if (!note) {
+            return res.status(404).send({ message: "Note Not found." });
+        }
+        if (!note.isPublic) {
+            return res.status(401).send({ message: "Unauthorized!" });
+        }
+        res.send(note);
+    });
+};
+exports.getPublicNote = getPublicNote;
 const getUserNotes = (req, res) => {
     Note.find({ author: req.userId })
         .exec((err, notes) => {
@@ -50,7 +68,7 @@ const createNote = (req, res) => {
     });
     note.save((err, note) => {
         if (err) {
-            res.status(500).send({ message: err });
+            res.status(500).send({ message: 'Error creating note:' + err });
             return;
         }
         res.send(note);

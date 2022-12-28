@@ -2,11 +2,42 @@ import './noteCreator.css';
 
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import Toggle from 'react-toggle';
 import React from 'react';
 
 import NotesService from '../services/notes.service';
 
 import { WithContext as ReactTags } from 'react-tag-input';
+
+const PopupConfig = ({ isPublic, setIsPublic, handleClose }) => {
+  return (
+    <div className='popup-box'>
+      <div className='popup-config'>
+        <h2>Configuration</h2>
+        <hr></hr>
+        <span className='close-btn' onClick={handleClose}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+          </svg>
+        </span>
+        <div className='d-flex justify-content-between'>
+          <div className='d-flex align-items-center'>
+            <Toggle
+              id="isPublicStatus"
+              defaultChecked={isPublic}
+              onChange={() => {
+                setIsPublic(!isPublic);
+              }}
+            />
+            {
+              isPublic ? <label htmlFor="isPublicStatus" className='ml-2'>Public</label> : <label htmlFor="isPublicStatus" className='ml-2'>Private</label>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const MenuBarEditor = ({ editor }) => {
   if (!editor) return null
@@ -170,8 +201,7 @@ const MenuBarEditor = ({ editor }) => {
   )
 }
 
-const Tags = (props) => {
-
+const Tags = ({ tags, setTags }) => {
   const KeyCodes = {
     comma: 188,
     enter: 13,
@@ -195,11 +225,6 @@ const Tags = (props) => {
 
     setTags(newTags)
   }
-
-  const [tags, setTags] = React.useState([])
-  React.useImperativeHandle(props.forwardedRef, () => ({
-    getTags: () => tags,
-  }))
   
   return (  
     <div className='tags'>
@@ -216,23 +241,32 @@ const Tags = (props) => {
 }
 
 const Editor = () => {
+  const [errorMessage, setErrorMessage] = React.useState('')
+  const [title, setTitle] = React.useState('')
+  const [tags, setTags] = React.useState([])
+  const [isPublic, setIsPublic] = React.useState(false)
+  const [isPopupOpen, setIsPopupOpen] = React.useState(false)
+
   const editor = useEditor({
     extensions: [StarterKit],
     content: ``,
-    title: ``,
   })
 
-  const Tagsref = React.useRef()
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    NotesService.publish(editor.title, editor.getHTML(), Tagsref.current.getTags().map((tag) => tag.text)).then
-    (response => {
-      console.log(response)
-      if (response.status === 200) {
-        window.location.href = `/notes/${response.data._id}`
+  const handleSubmit = () => {
+    NotesService.publish(title, editor.getHTML(), tags.map((tag) => tag.text), isPublic).then(
+      (response) => {
+        if (response.status === 200) {
+          window.location.href = '/notes/' + response.data._id
+        }
+      },
+      (error) => {
+        setErrorMessage(error.response.data.message)
       }
-    })
+    )
+  }
+  
+  const togglePopupConfig = () => {
+    setIsPopupOpen(!isPopupOpen)
   }
 
   return (
@@ -244,7 +278,7 @@ const Editor = () => {
               type='text'
               className='form-control'
               placeholder='Title'
-              onChange={(e) => (editor.title = e.target.value)}
+              onChange={(e) => setTitle(e.target.value)}
             />
           </div>
         </div>
@@ -252,6 +286,7 @@ const Editor = () => {
           <div className='config d-flex justify-content-end'>
             <button
               className='btn btn-outline-secondary'
+              onClick={togglePopupConfig}
             >
               config
             </button>
@@ -263,7 +298,7 @@ const Editor = () => {
       <div className='row'>
         <div className='col-8'>
           <div className='tags'>
-            <Tags forwardedRef={Tagsref} />
+            <Tags tags={tags} setTags={setTags} />
           </div>
         </div>
         <div className='col-4'>
@@ -277,6 +312,18 @@ const Editor = () => {
           </div>
         </div>
       </div>
+      {isPopupOpen && (
+        <PopupConfig
+          isPublic={isPublic}
+          setIsPublic={setIsPublic}
+          handleClose={togglePopupConfig}
+        />
+      )}
+      {errorMessage && (
+        <div className='alert alert-danger' role='alert'>
+          {errorMessage}
+        </div>
+      )}
     </>
   )
 }

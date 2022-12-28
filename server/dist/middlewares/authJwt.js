@@ -20,13 +20,6 @@ const verifyToken = (req, res, next) => {
             next();
         }
     });
-    // jwt.verify(token, config.secret, (err: any, decoded: any) => {
-    //   if (err) {
-    //     return res.status(401).send({ message: "Unauthorized!" });
-    //   }
-    //   req.userId = decoded.id;
-    //   next();
-    // });
 };
 exports.authJwt = {
     verifyToken
