@@ -1,6 +1,6 @@
 import {Document, model, Schema} from 'mongoose';
 
-interface ContributionInterface extends Document {
+export interface ContributionInterface extends Document {
   title: string;
   description: string;
   author: Schema.Types.ObjectId;
@@ -10,7 +10,7 @@ interface ContributionInterface extends Document {
   created: Date;
 }
 
-const ContributionSchema = new Schema<ContributionInterface>({
+export const ContributionSchema = new Schema<ContributionInterface>({
   title: {
     type: String,
     required: true,

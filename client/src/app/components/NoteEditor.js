@@ -261,9 +261,7 @@ const Editor = () => {
       setTitle(response.data.title)
       if (editor)
         editor.chain().focus().setContent(response.data.content).run()
-      response.data.tags.forEach((tag) => {
-        setTags((tags) => [...tags, { id: tag, text: tag }])
-      })
+      setTags(response.data.tags.map((tag) => ({ id: tag, text: tag })))
       setIsPublic(response.data.isPublic)
     }).catch((error) => {
       console.log(error)

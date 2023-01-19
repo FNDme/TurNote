@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Contribution = void 0;
+exports.Contribution = exports.ContributionSchema = void 0;
 const mongoose_1 = require("mongoose");
-const ContributionSchema = new mongoose_1.Schema({
+exports.ContributionSchema = new mongoose_1.Schema({
     title: {
         type: String,
         required: true,
@@ -36,4 +36,4 @@ const ContributionSchema = new mongoose_1.Schema({
         default: Date.now,
     },
 });
-exports.Contribution = (0, mongoose_1.model)('Contribution', ContributionSchema);
+exports.Contribution = (0, mongoose_1.model)('Contribution', exports.ContributionSchema);

@@ -79,6 +79,18 @@ export function notesRoutes(app: any) {
     controller.removeTag
   );
 
+  app.post(
+    "/api/notes/:id/shareWith",
+    middlewares.authJwt.verifyToken,
+    controller.shareNoteWithUser
+  )
+
+  app.delete(
+    "/api/notes/:id/shareWith",
+    middlewares.authJwt.verifyToken,
+    controller.unshareNoteWithUser
+  )
+
   // app.post(
   //   "/api/notes/:id/rate",
   //   middlewares.authJwt.verifyToken,
