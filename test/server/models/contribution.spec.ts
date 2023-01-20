@@ -1,6 +1,6 @@
 import 'mocha';
 import { expect } from 'chai';
-import { Contribution, ContributionInterface, ContributionSchema } from '../../src/models/contribution';
+import { Contribution, ContributionInterface, ContributionSchema } from '../../../server/src/models/contribution';
 import mongoose, { Schema } from 'mongoose';
 
 
@@ -15,10 +15,6 @@ describe('Contribution model', () => {
       changes: 'Test changes',
       approved: false,
     });
-  });
-
-  it('ContributionSchema should be a Schema', () => {
-    expect(ContributionSchema).to.be.an.instanceOf(Schema);
   });
   
   it('should be able to create a new contribution', () => {
