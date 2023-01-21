@@ -9,11 +9,7 @@ import NotesService from '../services/notes.service';
 
 import { WithContext as ReactTags } from 'react-tag-input';
 
-const PopupConfig = ({ isPublic, setIsPublic, handleClose }) => {
-  function handlePublicStatus() {
-    setIsPublic(!isPublic);
-  }
-
+const PopupConfig = ({ isPublic, handleIsPublic, handleClose }) => {
   return (
     <div className='popup-box'>
       <div className='popup-config'>
@@ -29,7 +25,7 @@ const PopupConfig = ({ isPublic, setIsPublic, handleClose }) => {
             <Toggle
               id="isPublicStatus"
               defaultChecked={isPublic}
-              onChange={handlePublicStatus}
+              onChange={handleIsPublic}
             />
             {
               isPublic ? <label htmlFor="isPublicStatus" className='ml-2'>Public</label> : <label htmlFor="isPublicStatus" className='ml-2'>Private</label>
@@ -271,6 +267,10 @@ const Editor = () => {
     setIsPopupOpen(!isPopupOpen)
   }
 
+  function handleIsPublic() {
+    setIsPublic(!isPublic)
+  }
+
   return (
     <>
       <div className='row'>
@@ -317,7 +317,7 @@ const Editor = () => {
       {isPopupOpen && (
         <PopupConfig
           isPublic={isPublic}
-          setIsPublic={setIsPublic}
+          handleIsPublic={handleIsPublic}
           handleClose={togglePopupConfig}
         />
       )}
