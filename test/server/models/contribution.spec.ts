@@ -1,7 +1,7 @@
 import 'mocha';
 import { expect } from 'chai';
-import { Contribution, ContributionInterface, ContributionSchema } from '../../../server/src/models/contribution';
-import mongoose, { Schema } from 'mongoose';
+import { Contribution, ContributionInterface } from '../../../server/src/models/contribution';
+import mongoose from 'mongoose';
 
 
 describe('Contribution model', () => {
