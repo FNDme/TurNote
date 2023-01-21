@@ -18,7 +18,7 @@ describe('Contribution model', () => {
   });
   
   it('should be able to create a new contribution', () => {
-    const contribution = new Contribution({
+    new Contribution({
       title: 'Test title',
       description: 'Test description',
       author: new mongoose.Types.ObjectId(),
