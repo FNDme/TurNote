@@ -10,6 +10,10 @@ import NotesService from '../services/notes.service';
 import { WithContext as ReactTags } from 'react-tag-input';
 
 const PopupConfig = ({ isPublic, setIsPublic, handleClose }) => {
+  function handlePublicStatus() {
+    setIsPublic(!isPublic);
+  }
+
   return (
     <div className='popup-box'>
       <div className='popup-config'>
@@ -25,9 +29,7 @@ const PopupConfig = ({ isPublic, setIsPublic, handleClose }) => {
             <Toggle
               id="isPublicStatus"
               defaultChecked={isPublic}
-              onChange={() => {
-                setIsPublic(!isPublic);
-              }}
+              onChange={handlePublicStatus}
             />
             {
               isPublic ? <label htmlFor="isPublicStatus" className='ml-2'>Public</label> : <label htmlFor="isPublicStatus" className='ml-2'>Private</label>
@@ -209,15 +211,15 @@ const Tags = ({ tags, setTags }) => {
 
   const delimiters = [KeyCodes.comma, KeyCodes.enter]
 
-  const handleDelete = (i) => {
+  function handleDelete(i) {
     setTags([...tags.filter((tag, index) => index !== i)])
   }
 
-  const handleAddition = (tag) => {
+  function handleAddition(tag) {
     setTags([...tags, tag])
   }
 
-  const handleDrag = (tag, currPos, newPos) => {
+  function handleDrag(tag, currPos, newPos) {
     const newTags = tags.slice()
 
     newTags.splice(currPos, 1)
@@ -225,7 +227,7 @@ const Tags = ({ tags, setTags }) => {
 
     setTags(newTags)
   }
-  
+
   return (  
     <div className='tags'>
       <ReactTags
@@ -265,7 +267,7 @@ const Editor = () => {
     )
   }
   
-  const togglePopupConfig = () => {
+  function togglePopupConfig() {
     setIsPopupOpen(!isPopupOpen)
   }
 

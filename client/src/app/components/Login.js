@@ -33,7 +33,7 @@ const Login = () => {
     password: Yup.string().required("This field is required!"),
   });
 
-  const handleLogin = (formValue) => {
+  function handleLogin(formValue) {
     const { username, password } = formValue;
     setLoading(true);
 
@@ -46,7 +46,7 @@ const Login = () => {
       .catch(() => {
         setLoading(false);
       });
-  };
+  }
 
   if (isLoggedIn) {
     return <Navigate to="/profile" />;
