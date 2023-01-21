@@ -159,8 +159,7 @@ export const addTag = (req: any, res: any) => {
   const id = req.params.id;
 
   Note
-    .findById
-    (id)
+    .findById(id)
     .exec((err: any, note: any) => {
       if (err) {
         res.status(500).send({ message: err });
@@ -189,8 +188,7 @@ export const removeTag = (req: any, res: any) => {
   const id = req.params.id;
 
   Note
-    .findById
-    (id)
+    .findById(id)
     .exec((err: any, note: any) => {
       if (err) {
         res.status(500).send({ message: err });
@@ -223,8 +221,7 @@ export const rateNote = (req: any, res: any) => {
   }
 
   Note
-    .findById
-    (id)
+    .findById(id)
     .exec((err: any, note: any) => {
       if (err) {
         res.status(500).send({ message: err });
@@ -253,8 +250,7 @@ export const unrateNote = (req: any, res: any) => {
   const id = req.params.id;
 
   Note
-    .findById
-    (id)
+    .findById(id)
     .exec((err: any, note: any) => {
       if (err) {
         res.status(500).send({ message: err });
@@ -282,8 +278,7 @@ export const unrateNote = (req: any, res: any) => {
 export const getPublicNotesByTag = (req: any, res: any) => {
   const tag = req.params.tag;
 
-  Note.find
-    ({ tags: tag, isPublic: true })
+  Note.find({ tags: tag, isPublic: true })
     .exec((err: any, notes: any) => {
       if (err) {
         res.status(500).send({ message: err });
@@ -303,8 +298,7 @@ export const getNotesByTag = (req: any, res: any) => {
   const tag = req.params.tag;
   const author = req.userId;
 
-  Note.find
-    ({ tags: tag, $or: [{ author: author }, { isPublic: true }] })
+  Note.find({ tags: tag, $or: [{ author: author }, { isPublic: true }] })
     .exec((err: any, notes: any) => {
       if (err) {
         res.status(500).send({ message: err });
@@ -325,8 +319,7 @@ export const shareNoteWithUser = (req: any, res: any) => {
   const userId = req.body.userId;
 
   Note
-    .findById
-    (id)
+    .findById(id)
     .exec((err: any, note: any) => {
       if (err) {
         res.status(500).send({ message: err });
@@ -366,8 +359,7 @@ export const shareNoteWithUser = (req: any, res: any) => {
       }
 
       User
-        .findById
-        (userId)
+        .findById(userId)
         .exec((err: any, user: any) => {
           if (err) {
             res.status(500).send({ message: err });
@@ -399,8 +391,7 @@ export const unshareNoteWithUser = (req: any, res: any) => {
   const userId = req.body.userId;
 
   Note
-    .findById
-    (id)
+    .findById(id)
     .exec((err: any, note: any) => {
       if (err) {
         res.status(500).send({ message: err });
