@@ -37,250 +37,167 @@ const PopupConfig = ({ isPublic, handleIsPublic, handleClose }) => {
   );
 };
 
-// const MenuBarEditor = ({ editor }) => {
-//   if (!editor) return null
-
-//   return (
-//     <>
-//     <div className='d-flex flex-wrap barRow'>
-//       <button
-//         onClick={() => editor.chain().focus().toggleBold().run()}
-//         disabled={
-//           !editor.can()
-//             .chain()
-//             .focus()
-//             .toggleBold()
-//             .run()
-//         }
-//         className={editor.isActive('bold') ? 'is-active' : ''}
-//       >
-//         bold
-//       </button>
-//       <button
-//         onClick={() => editor.chain().focus().toggleItalic().run()}
-//         disabled={
-//           !editor.can()
-//             .chain()
-//             .focus()
-//             .toggleItalic()
-//             .run()
-//         }
-//         className={editor.isActive('italic') ? 'is-active' : ''}
-//       >
-//         italic
-//       </button>
-//       <button
-//         onClick={() => editor.chain().focus().toggleStrike().run()}
-//         disabled={
-//           !editor.can()
-//             .chain()
-//             .focus()
-//             .toggleStrike()
-//             .run()
-//         }
-//         className={editor.isActive('strike') ? 'is-active' : ''}
-//       >
-//         strike
-//       </button>
-//       <button
-//         onClick={() => editor.chain().focus().toggleCode().run()}
-//         disabled={
-//           !editor.can()
-//             .chain()
-//             .focus()
-//             .toggleCode()
-//             .run()
-//         }
-//         className={editor.isActive('code') ? 'is-active' : ''}
-//       >
-//         code
-//       </button>
-//     </div>
-//     <div className='d-flex flex-wrap barRow'>
-//       <button
-//         onClick={() => editor.chain().focus().setParagraph().run()}
-//         className={editor.isActive('paragraph') ? 'is-active paragraph-style' : 'paragraph-style'}
-//       >
-//         paragraph
-//       </button>
-//       <button
-//         onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-//         className={editor.isActive('heading', { level: 1 }) ? 'is-active paragraph-style' : 'paragraph-style'}
-//       >
-//         h1
-//       </button>
-//       <button
-//         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-//         className={editor.isActive('heading', { level: 2 }) ? 'is-active paragraph-style' : 'paragraph-style'}
-//       >
-//         h2
-//       </button>
-//       <button
-//         onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-//         className={editor.isActive('heading', { level: 3 }) ? 'is-active paragraph-style' : 'paragraph-style'}
-//       >
-//         h3
-//       </button>
-//       <button
-//         onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
-//         className={editor.isActive('heading', { level: 4 }) ? 'is-active paragraph-style' : 'paragraph-style'}
-//       >
-//         h4
-//       </button>
-//       <button
-//         onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
-//         className={editor.isActive('heading', { level: 5 }) ? 'is-active paragraph-style' : 'paragraph-style'}
-//       >
-//         h5
-//       </button>
-//       <button
-//         onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()}
-//         className={editor.isActive('heading', { level: 6 }) ? 'is-active paragraph-style' : 'paragraph-style'}
-//       >
-//         h6
-//       </button>
-//     </div>
-//     <div className='d-flex flex-wrap barRow'>
-//       <button
-//         onClick={() => editor.chain().focus().toggleBulletList().run()}
-//         className={editor.isActive('bulletList') ? 'is-active' : ''}
-//       >
-//         bullet list
-//       </button>
-//       <button
-//         onClick={() => editor.chain().focus().toggleOrderedList().run()}
-//         className={editor.isActive('orderedList') ? 'is-active' : ''}
-//       >
-//         ordered list
-//       </button>
-//       <button
-//         onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-//         className={editor.isActive('codeBlock') ? 'is-active' : ''}
-//       >
-//         code block
-//       </button>
-//       <button
-//         onClick={() => editor.chain().focus().toggleBlockquote().run()}
-//         className={editor.isActive('blockquote') ? 'is-active' : ''}
-//       >
-//         blockquote
-//       </button>
-//       <button onClick={() => editor.chain().focus().setHorizontalRule().run()}>
-//         horizontal rule
-//       </button>
-//     </div>
-//     <div className='d-flex flex-wrap barRow'>
-//       <button
-//         onClick={() => editor.chain().focus().undo().run()}
-//         disabled={
-//           !editor.can()
-//             .chain()
-//             .focus()
-//             .undo()
-//             .run()
-//         }
-//       >
-//         undo
-//       </button>
-//       <button
-//         onClick={() => editor.chain().focus().redo().run()}
-//         disabled={
-//           !editor.can()
-//             .chain()
-//             .focus()
-//             .redo()
-//             .run()
-//         }
-//       >
-//         redo
-//       </button>
-//     </div>
-//     </>
-//   )
-// }
-
 const MenuBarEditor = ({ editor }) => {
   if (!editor) return null
-
-  const buttonTypes = [
-    { type: 'bold', name: 'bold' },
-    { type: 'italic', name: 'italic' },
-    { type: 'strike', name: 'strike' },
-    { type: 'code', name: 'code' },
-    { type: 'paragraph', name: 'paragraph' },
-    { type: 'heading', name: 'h1', level: 1 },
-    { type: 'heading', name: 'h2', level: 2 },
-    { type: 'heading', name: 'h3', level: 3 },
-    { type: 'heading', name: 'h4', level: 4 },
-    { type: 'heading', name: 'h5', level: 5 },
-    { type: 'heading', name: 'h6', level: 6 },
-    { type: 'bulletList', name: 'bulletList' },
-    { type: 'numberList', name: 'numberList' },
-    { type: 'blockquote', name: 'blockquote' },
-    { type: 'link', name: 'link' }
-  ];
-
-  const getButtonClass = (type, level) => {
-    let className = '';
-    if (editor.isActive(type, { level })) className += 'is-active ';
-    if (type === 'paragraph') className += 'paragraph-style';
-    return className;
-  };
-
-  const isDisabled = (type, level) => {
-    if (type === 'heading') {
-      return !editor.can().chain().focus().toggleHeading({ level }).run();
-    } else {
-      return !editor.can().chain().focus()[`toggle${type.charAt(0).toUpperCase()}${type.slice(1)}`]().run();
-    }
-  };
 
   return (
     <>
     <div className='d-flex flex-wrap barRow'>
-      {
-        buttonTypes.slice(0, 4).map(({ type, name }) => (
-          <button
-          onClick={() => editor.chain().focus()[`toggle${type.charAt(0).toUpperCase()}${type.slice(1)}`]().run()}
-          disabled={isDisabled(type)}
-          className={getButtonClass(type)}
-        >
-          {name}
-        </button>
-      ))
-    }
-  </div>
-  <div className='d-flex flex-wrap barRow'>
-    {
-      buttonTypes.slice(4, 11).map(({ type, name, level }) => (
-        <button
-          onClick={() => editor.chain().focus()[`toggle${type.charAt(0).toUpperCase()}${type.slice(1)}`](level ? { level } : {}).run()}
-          disabled={isDisabled(type, level)}
-          className={getButtonClass(type, level)}
-        >
-          {name}
-        </button>
-      ))
-    }
-  </div>
-  <div className='d-flex flex-wrap barRow'>
-    {
-      buttonTypes.slice(11).map(({ type, name }) => (
-        <button
-          onClick={() => editor.chain().focus()[`toggle${type.charAt(0).toUpperCase()}${type.slice(1)}`]().run()}
-          disabled={isDisabled(type)}
-          className={getButtonClass(type)}
-        >
-          {name}
-          </button>
-        ))
-      }
+      <button
+        onClick={() => editor.chain().focus().toggleBold().run()}
+        disabled={
+          !editor.can()
+            .chain()
+            .focus()
+            .toggleBold()
+            .run()
+        }
+        className={editor.isActive('bold') ? 'is-active' : ''}
+      >
+        bold
+      </button>
+      <button
+        onClick={() => editor.chain().focus().toggleItalic().run()}
+        disabled={
+          !editor.can()
+            .chain()
+            .focus()
+            .toggleItalic()
+            .run()
+        }
+        className={editor.isActive('italic') ? 'is-active' : ''}
+      >
+        italic
+      </button>
+      <button
+        onClick={() => editor.chain().focus().toggleStrike().run()}
+        disabled={
+          !editor.can()
+            .chain()
+            .focus()
+            .toggleStrike()
+            .run()
+        }
+        className={editor.isActive('strike') ? 'is-active' : ''}
+      >
+        strike
+      </button>
+      <button
+        onClick={() => editor.chain().focus().toggleCode().run()}
+        disabled={
+          !editor.can()
+            .chain()
+            .focus()
+            .toggleCode()
+            .run()
+        }
+        className={editor.isActive('code') ? 'is-active' : ''}
+      >
+        code
+      </button>
+    </div>
+    <div className='d-flex flex-wrap barRow'>
+      <button
+        onClick={() => editor.chain().focus().setParagraph().run()}
+        className={editor.isActive('paragraph') ? 'is-active paragraph-style' : 'paragraph-style'}
+      >
+        paragraph
+      </button>
+      <button
+        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+        className={editor.isActive('heading', { level: 1 }) ? 'is-active paragraph-style' : 'paragraph-style'}
+      >
+        h1
+      </button>
+      <button
+        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+        className={editor.isActive('heading', { level: 2 }) ? 'is-active paragraph-style' : 'paragraph-style'}
+      >
+        h2
+      </button>
+      <button
+        onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+        className={editor.isActive('heading', { level: 3 }) ? 'is-active paragraph-style' : 'paragraph-style'}
+      >
+        h3
+      </button>
+      <button
+        onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
+        className={editor.isActive('heading', { level: 4 }) ? 'is-active paragraph-style' : 'paragraph-style'}
+      >
+        h4
+      </button>
+      <button
+        onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
+        className={editor.isActive('heading', { level: 5 }) ? 'is-active paragraph-style' : 'paragraph-style'}
+      >
+        h5
+      </button>
+      <button
+        onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()}
+        className={editor.isActive('heading', { level: 6 }) ? 'is-active paragraph-style' : 'paragraph-style'}
+      >
+        h6
+      </button>
+    </div>
+    <div className='d-flex flex-wrap barRow'>
+      <button
+        onClick={() => editor.chain().focus().toggleBulletList().run()}
+        className={editor.isActive('bulletList') ? 'is-active' : ''}
+      >
+        bullet list
+      </button>
+      <button
+        onClick={() => editor.chain().focus().toggleOrderedList().run()}
+        className={editor.isActive('orderedList') ? 'is-active' : ''}
+      >
+        ordered list
+      </button>
+      <button
+        onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+        className={editor.isActive('codeBlock') ? 'is-active' : ''}
+      >
+        code block
+      </button>
+      <button
+        onClick={() => editor.chain().focus().toggleBlockquote().run()}
+        className={editor.isActive('blockquote') ? 'is-active' : ''}
+      >
+        blockquote
+      </button>
+      <button onClick={() => editor.chain().focus().setHorizontalRule().run()}>
+        horizontal rule
+      </button>
+    </div>
+    <div className='d-flex flex-wrap barRow'>
+      <button
+        onClick={() => editor.chain().focus().undo().run()}
+        disabled={
+          !editor.can()
+            .chain()
+            .focus()
+            .undo()
+            .run()
+        }
+      >
+        undo
+      </button>
+      <button
+        onClick={() => editor.chain().focus().redo().run()}
+        disabled={
+          !editor.can()
+            .chain()
+            .focus()
+            .redo()
+            .run()
+        }
+      >
+        redo
+      </button>
     </div>
     </>
-  );
-};
-
-
+  )
+}
 
 const Tags = ({ tags, setTags }) => {
   const KeyCodes = {

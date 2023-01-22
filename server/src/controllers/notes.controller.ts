@@ -314,115 +314,115 @@ export const getNotesByTag = (req: any, res: any) => {
   );
 }
 
-export const shareNoteWithUser = (req: any, res: any) => {
-  const id = req.params.id;
-  const userId = req.body.userId;
+// export const shareNoteWithUser = (req: any, res: any) => {
+//   const id = req.params.id;
+//   const userId = req.body.userId;
 
-  Note
-    .findById(id)
-    .exec((err: any, note: any) => {
-      if (err) {
-        res.status(500).send({ message: err });
-        return;
-      }
+//   Note
+//     .findById(id)
+//     .exec((err: any, note: any) => {
+//       if (err) {
+//         res.status(500).send({ message: err });
+//         return;
+//       }
 
-      if (!note) {
-        return res.status(404).send({ message: "Note Not found." });
-      }
+//       if (!note) {
+//         return res.status(404).send({ message: "Note Not found." });
+//       }
 
-      if (note.author != req.userId) {
-        return res.status(401).send({ message: "Unauthorized!" });
-      }
+//       if (note.author != req.userId) {
+//         return res.status(401).send({ message: "Unauthorized!" });
+//       }
 
-      if (note.sharedWith.some((sharedWith: any) => sharedWith.user == userId && sharedWith.permission == req.body.permission)) {
-        return res.status(400).send({ message: "User already shared with." });
-      }
+//       if (note.sharedWith.some((sharedWith: any) => sharedWith.user == userId && sharedWith.permission == req.body.permission)) {
+//         return res.status(400).send({ message: "User already shared with." });
+//       }
 
-      if (note.sharedWith.some((sharedWith: any) => sharedWith.user == userId)) {
-        note.sharedWith.forEach((sharedWith: any) => {
-          if (sharedWith.user == userId) {
-            sharedWith.permission = req.body.permission;
-          }
-        });
-        note.save((err: any, note: any) => {
-          if (err) {
-            res.status(500).send({ message: err });
-            return;
-          }
-          res.send(note);
-        });
-        return;
-      }
+//       if (note.sharedWith.some((sharedWith: any) => sharedWith.user == userId)) {
+//         note.sharedWith.forEach((sharedWith: any) => {
+//           if (sharedWith.user == userId) {
+//             sharedWith.permission = req.body.permission;
+//           }
+//         });
+//         note.save((err: any, note: any) => {
+//           if (err) {
+//             res.status(500).send({ message: err });
+//             return;
+//           }
+//           res.send(note);
+//         });
+//         return;
+//       }
       
-      if (note.author == userId) {
-        return res.status(400).send({ message: "User is the author." });
-      }
+//       if (note.author == userId) {
+//         return res.status(400).send({ message: "User is the author." });
+//       }
 
-      User
-        .findById(userId)
-        .exec((err: any, user: any) => {
-          if (err) {
-            res.status(500).send({ message: err });
-            return;
-          }
+//       User
+//         .findById(userId)
+//         .exec((err: any, user: any) => {
+//           if (err) {
+//             res.status(500).send({ message: err });
+//             return;
+//           }
           
-          if (!user) {
-            return res.status(404).send({ message: "User Not found." });
-          }
+//           if (!user) {
+//             return res.status(404).send({ message: "User Not found." });
+//           }
 
-          note.sharedWith.push({ user: userId, permission: req.body.permission });
+//           note.sharedWith.push({ user: userId, permission: req.body.permission });
 
-          note.save((err: any, note: any) => {
-            if (err) {
-              res.status(500).send({ message: err });
-              return;
-            }
+//           note.save((err: any, note: any) => {
+//             if (err) {
+//               res.status(500).send({ message: err });
+//               return;
+//             }
 
-            res.send(note);
-          });
-        }
-      );
-    }
-  );
-}
+//             res.send(note);
+//           });
+//         }
+//       );
+//     }
+//   );
+// }
 
-export const unshareNoteWithUser = (req: any, res: any) => {
-  const id = req.params.id;
-  const userId = req.body.userId;
+// export const unshareNoteWithUser = (req: any, res: any) => {
+//   const id = req.params.id;
+//   const userId = req.body.userId;
 
-  Note
-    .findById(id)
-    .exec((err: any, note: any) => {
-      if (err) {
-        res.status(500).send({ message: err });
-        return;
-      }
+//   Note
+//     .findById(id)
+//     .exec((err: any, note: any) => {
+//       if (err) {
+//         res.status(500).send({ message: err });
+//         return;
+//       }
 
-      if (!note) {
-        return res.status(404).send({ message: "Note Not found." });
-      }
+//       if (!note) {
+//         return res.status(404).send({ message: "Note Not found." });
+//       }
 
-      if (note.author != req.userId) {
-        return res.status(401).send({ message: "Unauthorized!" });
-      }
+//       if (note.author != req.userId) {
+//         return res.status(401).send({ message: "Unauthorized!" });
+//       }
 
-      if (!note.sharedWith.some((sharedWith: any) => sharedWith.user == userId)) {
-        return res.status(400).send({ message: "User is not shared with." });
-      }
+//       if (!note.sharedWith.some((sharedWith: any) => sharedWith.user == userId)) {
+//         return res.status(400).send({ message: "User is not shared with." });
+//       }
 
-      note.sharedWith = note.sharedWith.filter((sharedWith: any) => sharedWith.user != userId);
+//       note.sharedWith = note.sharedWith.filter((sharedWith: any) => sharedWith.user != userId);
 
-      note.save((err: any, note: any) => {
-        if (err) {
-          res.status(500).send({ message: err });
-          return;
-        }
+//       note.save((err: any, note: any) => {
+//         if (err) {
+//           res.status(500).send({ message: err });
+//           return;
+//         }
 
-        res.send(note);
-      });
-    }
-  );
-}
+//         res.send(note);
+//       });
+//     }
+//   );
+// }
 
 // export const shareNoteWithUser = (req: any, res: any) => {
 //   const id = req.params.id;

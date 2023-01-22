@@ -2,7 +2,7 @@ import {Document, model, Schema} from 'mongoose';
 
 type permission = 'read' | 'read-write' | 'admin';
 
-interface NoteInterface extends Document {
+export interface NoteInterface extends Document {
   title: string;
   content: string;
   author: Schema.Types.ObjectId;
@@ -14,7 +14,7 @@ interface NoteInterface extends Document {
   created: Date;
 }
 
-const NoteSchema = new Schema<NoteInterface>({
+export const NoteSchema = new Schema<NoteInterface>({
   title: {
     type: String,
     required: true,

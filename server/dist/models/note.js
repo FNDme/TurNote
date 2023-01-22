@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Note = void 0;
+exports.Note = exports.NoteSchema = void 0;
 const mongoose_1 = require("mongoose");
-const NoteSchema = new mongoose_1.Schema({
+exports.NoteSchema = new mongoose_1.Schema({
     title: {
         type: String,
         required: true,
@@ -58,4 +58,4 @@ const NoteSchema = new mongoose_1.Schema({
         default: Date.now,
     },
 });
-exports.Note = (0, mongoose_1.model)('Note', NoteSchema);
+exports.Note = (0, mongoose_1.model)('Note', exports.NoteSchema);
