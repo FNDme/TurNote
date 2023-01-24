@@ -1,6 +1,6 @@
 import 'mocha';
 import { expect } from 'chai';
-import { User, UserInterface } from '../../../../server/src/models/user';
+import { User, UserInterface } from '../../src/models/user';
 import mongoose from 'mongoose';
 
 describe('User model', () => {

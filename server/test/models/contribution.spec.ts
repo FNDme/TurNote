@@ -1,6 +1,6 @@
 import 'mocha';
 import { expect } from 'chai';
-import { Contribution, ContributionInterface } from '../../../../server/src/models/contribution';
+import { Contribution, ContributionInterface } from '../../src/models/contribution';
 import mongoose from 'mongoose';
 
 

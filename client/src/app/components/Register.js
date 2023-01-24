@@ -1,22 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
 import { register } from "../slices/auth";
-import { clearMessage } from "../slices/message";
 
 import logoImg from "../../assets/img/logo.png";
 
 const Register = () => {
+  const dispatch = useDispatch();
   const [successful, setSuccessful] = useState(false);
 
   const { message } = useSelector((state) => state.message);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(clearMessage());
-  }, [dispatch]);
 
   const initialValues = {
     name: "",
@@ -89,6 +84,7 @@ const Register = () => {
                   <div className="form-group">
                     <label htmlFor="name">Name</label>
                     <Field
+                      data-testid="name"
                       name="name"
                       type="text"
                       className={
@@ -108,6 +104,7 @@ const Register = () => {
                   <div className="form-group">
                     <label htmlFor="username">Username</label>
                     <Field
+                      data-testid="username"
                       name="username"
                       type="text"
                       className={
@@ -127,6 +124,7 @@ const Register = () => {
                   <div className="form-group">
                     <label htmlFor="email">Email</label>
                     <Field
+                      data-testid="email"
                       name="email"
                       type="email"
                       className={
@@ -144,6 +142,7 @@ const Register = () => {
                   <div className="form-group">
                     <label htmlFor="password">Password</label>
                     <Field
+                      data-testid="password"
                       name="password"
                       type="password"
                       className={
@@ -179,6 +178,7 @@ const Register = () => {
               successful ? "alert alert-success" : "alert alert-danger"
             }
             role="alert"
+            data-testid="message"
           >
             {message}
           </div>

@@ -1,10 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.unshareNoteWithUser = exports.shareNoteWithUser = exports.getNotesByTag = exports.getPublicNotesByTag = exports.unrateNote = exports.rateNote = exports.removeTag = exports.addTag = exports.deleteNote = exports.updateNote = exports.getNote = exports.createNote = exports.getNotes = exports.getUserNotes = exports.getPublicNote = exports.getPublicNotes = void 0;
-const config = require("../config/auth.config");
+exports.getNotesByTag = exports.getPublicNotesByTag = exports.unrateNote = exports.rateNote = exports.removeTag = exports.addTag = exports.deleteNote = exports.updateNote = exports.getNote = exports.createNote = exports.getNotes = exports.getUserNotes = exports.getPublicNote = exports.getPublicNotes = void 0;
 const models_1 = require("../models");
 const Note = models_1.db.note;
-const User = models_1.db.user;
 const getPublicNotes = (req, res) => {
     Note.find({ isPublic: true })
         .exec((err, notes) => {
@@ -95,7 +93,6 @@ const getNote = (req, res) => {
 };
 exports.getNote = getNote;
 const updateNote = (req, res) => {
-    console.log('updateNote');
     const id = req.params.id;
     Note.findByIdAndUpdate(id, req.body, { useFindAndModify: false }, (err, note) => {
         if (err) {
@@ -255,139 +252,3 @@ const getNotesByTag = (req, res) => {
     });
 };
 exports.getNotesByTag = getNotesByTag;
-const shareNoteWithUser = (req, res) => {
-    const id = req.params.id;
-    const userId = req.body.userId;
-    Note
-        .findById(id)
-        .exec((err, note) => {
-        if (err) {
-            res.status(500).send({ message: err });
-            return;
-        }
-        if (!note) {
-            return res.status(404).send({ message: "Note Not found." });
-        }
-        if (note.author != req.userId) {
-            return res.status(401).send({ message: "Unauthorized!" });
-        }
-        if (note.sharedWith.some((sharedWith) => sharedWith.user == userId && sharedWith.permission == req.body.permission)) {
-            return res.status(400).send({ message: "User already shared with." });
-        }
-        if (note.sharedWith.some((sharedWith) => sharedWith.user == userId)) {
-            note.sharedWith.forEach((sharedWith) => {
-                if (sharedWith.user == userId) {
-                    sharedWith.permission = req.body.permission;
-                }
-            });
-            note.save((err, note) => {
-                if (err) {
-                    res.status(500).send({ message: err });
-                    return;
-                }
-                res.send(note);
-            });
-            return;
-        }
-        if (note.author == userId) {
-            return res.status(400).send({ message: "User is the author." });
-        }
-        User
-            .findById(userId)
-            .exec((err, user) => {
-            if (err) {
-                res.status(500).send({ message: err });
-                return;
-            }
-            if (!user) {
-                return res.status(404).send({ message: "User Not found." });
-            }
-            note.sharedWith.push({ user: userId, permission: req.body.permission });
-            note.save((err, note) => {
-                if (err) {
-                    res.status(500).send({ message: err });
-                    return;
-                }
-                res.send(note);
-            });
-        });
-    });
-};
-exports.shareNoteWithUser = shareNoteWithUser;
-const unshareNoteWithUser = (req, res) => {
-    const id = req.params.id;
-    const userId = req.body.userId;
-    Note
-        .findById(id)
-        .exec((err, note) => {
-        if (err) {
-            res.status(500).send({ message: err });
-            return;
-        }
-        if (!note) {
-            return res.status(404).send({ message: "Note Not found." });
-        }
-        if (note.author != req.userId) {
-            return res.status(401).send({ message: "Unauthorized!" });
-        }
-        if (!note.sharedWith.some((sharedWith) => sharedWith.user == userId)) {
-            return res.status(400).send({ message: "User is not shared with." });
-        }
-        note.sharedWith = note.sharedWith.filter((sharedWith) => sharedWith.user != userId);
-        note.save((err, note) => {
-            if (err) {
-                res.status(500).send({ message: err });
-                return;
-            }
-            res.send(note);
-        });
-    });
-};
-exports.unshareNoteWithUser = unshareNoteWithUser;
-// export const shareNoteWithUser = (req: any, res: any) => {
-//   const id = req.params.id;
-//   Note
-//     .findById
-//     (id)
-//     .exec((err: any, note: any) => {
-//       if (err) {
-//         res.status(500).send({ message: err });
-//         return;
-//       }
-//       if (!note) {
-//         return res.status(404).send({ message: "Note Not found." });
-//       }
-//       if (note.author != req.userId) {
-//         return res.status(401).send({ message: "Unauthorized!" });
-//       }
-//       if (note.sharedWith.includes(req.body.userId)) {
-//         return res.status(400).send({ message: "User is already shared with." });
-//       }
-//       if (note.author == req.body.userId) {
-//         return res.status(400).send({ message: "User is already the author." });
-//       }
-//       if (req.body.userId == "") {
-//         return res.status(400).send({ message: "User ID is empty." });
-//       }
-//       if (req.body.permission !== "read" && req.body.permission !== "read-write" && req.body.permission !== "admin") {
-//         return res.status(400).send({ message: "Permission is invalid." });
-//       }
-//       if (note.sharedWith.includes
-//       if (!isInArray) {
-//         note.sharedWith.push(
-//           {
-//             user: req.body.userId,
-//             permission: req.body.permission ? req.body.permission : "read",
-//           }
-//         );
-//       }
-//       note.save((err: any, note: any) => {
-//         if (err) {
-//           res.status(500).send({ message: err });
-//           return;
-//         }
-//         res.send(note);
-//       });
-//     }
-//   );
-// }

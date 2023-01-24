@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Note, NoteInterface } from '../../../../server/src/models/note';
+import { Note, NoteInterface } from '../../src/models/note';
 import mongoose from 'mongoose';
 
 describe('Note model', () => {

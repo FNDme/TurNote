@@ -5,7 +5,10 @@
   "main": "./dist/server.js",
   "scripts": {
     "build": "tsc",
-    "start": "tsc && node ./dist/server.js"
+    "start": "tsc && node ./dist/server.js",
+    "test": "mocha test/**/*.spec.ts",
+    "test:api": "mocha test_api/**/*.spec.ts",
+    "coverage": "nyc npm test && nyc report --reporter=lcov"
   },
   "author": "",
   "license": "ISC",
@@ -19,14 +22,18 @@
     "mongoose": "^6.8.0"
   },
   "devDependencies": {
+    "@types/chai": "^4.3.4",
     "@types/cookie-session": "^2.0.44",
     "@types/cors": "^2.8.13",
-    "@types/express": "^4.16.1",
-    "@types/jsonwebtoken": "^8.5.9",
-    "@types/node": "^18.11.11",
+    "@types/express": "^4.17.15",
+    "@types/jsonwebtoken": "^9.0.1",
+    "@types/mocha": "^10.0.1",
+    "chai": "^4.3.7",
+    "chai-http": "^4.3.0",
     "coveralls": "^3.1.1",
+    "mocha": "^10.2.0",
     "nyc": "^15.1.0",
     "ts-node": "^10.9.1",
-    "typescript": "^3.3.3"
+    "typescript": "^4.9.4"
   }
 }

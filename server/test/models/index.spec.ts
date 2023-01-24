@@ -1,6 +1,6 @@
 import 'mocha';
 import { expect } from 'chai';
-import { db } from '../../../../server/src/models';
+import { db } from '../../src/models';
 
 describe('Models', () => {
   it('should have a user model', () => {
